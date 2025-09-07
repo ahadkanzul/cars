@@ -3,105 +3,581 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matrix Vehicle Hacker</title>
+    <title>Vehicle Information Lookup - Excise Data</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Courier New', monospace;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background-color: #000;
-            color: #00ff00;
-            overflow-x: hidden;
-            position: relative;
-        }
-        
-        #matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.3;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
         }
         
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: rgba(0, 0, 0, 0.8);
-            border: 1px solid #00ff00;
-            box-shadow: 0 0 15px #00ff00;
-            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
         }
         
         header {
+            background: linear-gradient(90deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            padding: 25px;
             text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #00ff00;
         }
         
         h1 {
             font-size: 2.5rem;
-            text-shadow: 0 0 10px #00ff00;
-            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .search-section {
+            padding: 25px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .search-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .vehicle-type {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .type-btn {
+            padding: 12px 25px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #495057;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .type-btn.active {
+            background: linear-gradient(90deg, #1a2a6c, #b21f1f);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .type-btn:hover:not(.active) {
+            background: #dee2e6;
         }
         
         .search-box {
             display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .input-group {
+            display: flex;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 50px;
+            overflow: hidden;
         }
         
         input {
-            background-color: #000;
-            color: #00ff00;
-            border: 1px solid #00ff00;
-            padding: 12px;
-            font-size: 1.2rem;
-            width: 250px;
-            margin-right: 10px;
+            flex-grow: 1;
+            padding: 16px 20px;
+            border: none;
+            font-size: 1.1rem;
+            outline: none;
+            background: white;
+        }
+        
+        input::placeholder {
+            color: #6c757d;
         }
         
         button {
-            background-color: #000;
-            color: #00ff00;
-            border: 1px solid #00ff00;
-            padding: 12px 24px;
+            background: linear-gradient(90deg, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            padding: 16px 30px;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
             transition: all 0.3s;
         }
         
         button:hover {
-            background-color: #00ff00;
-            color: #000;
-            box-shadow: 0 0 15px #00ff00;
+            background: linear-gradient(90deg, #243b7a, #c82323);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .example {
+            color: #6c757d;
+            font-size: 0.95rem;
+            margin-top: 5px;
         }
         
         .results {
             display: none;
-            margin-top: 30px;
-            border: 1px solid #00ff00;
-            padding: 20px;
+            padding: 30px;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .results-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
         }
         
         .result-item {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed #00ff00;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid #1a2a6c;
+            transition: transform 0.3s;
         }
         
-        .result-item:last-child {
-            border-bottom: none;
+        .result-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .result-item strong {
+            color: #495057;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .result-item span {
+            color: #1a2a6c;
+            font-size: 1.2rem;
+            font-weight: 600;
         }
         
         .loading {
+            display: none;
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .spinner {
+            border: 5px solid rgba(26, 42, 108, 0.2);
+            border-radius: 50%;
+            border-top: 5px solid #1a2a6c;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            color: #dc3545;
+            text-align: center;
+            padding: 20px;
+            background: #f8d7da;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .success {
+            color: #155724;
+            text-align: center;
+            padding: 20px;
+            background: #d4edda;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: #6c757d;
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 0;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .vehicle-type {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                border-radius: 8px;
+            }
+            
+            input {
+                border-radius: 8px 8px 0 0;
+                margin-bottom: 1px;
+            }
+            
+            button {
+                border-radius: 0 0 8px 8px;
+                width: 100%;
+            }
+            
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .note {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Vehicle Information Lookup</h1>
+            <p class="subtitle">Access Excise Department Vehicle Database</p>
+        </header>
+        
+        <div class="search-section">
+            <h2 class="search-title">Search Vehicle Information</h2>
+            
+            <div class="vehicle-type">
+                <button class="type-btn active" data-type="4-wheeler">4 Wheeler</button>
+                <button class="type-btn" data-type="2-wheeler">2 Wheeler</button>
+            </div>
+            
+            <div class="search-box">
+                <div class="input-group">
+                    <input type="text" id="vehicle-number" placeholder="Please Enter Registration No. e.g LEA-1234" maxlength="15">
+                    <button id="search-btn"><i class="fas fa-search"></i> Search Database</button>
+                </div>
+                <p class="example">Example: LEA-1234, KKG-9561, or ABC-123</p>
+            </div>
+        </div>
+        
+        <div class="note">
+            <p><strong>Note:</strong> This is a demonstration interface. Due to CORS restrictions, direct browser access to the Excise Department API is not possible. A backend service would be required for actual implementation.</p>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Searching vehicle database...</p>
+        </div>
+        
+        <div class="error" id="error">
+            <p><i class="fas fa-exclamation-circle"></i> <span id="error-message">Connection failed. Please try again.</span></p>
+        </div>
+        
+        <div class="success" id="success">
+            <p><i class="fas fa-check-circle"></i> Vehicle data retrieved successfully</p>
+        </div>
+        
+        <div class="results" id="results">
+            <div class="results-header">
+                <h2 class="results-title">Vehicle Information</h2>
+                <button id="print-btn"><i class="fas fa-print"></i> Print</button>
+            </div>
+            
+            <div class="result-grid">
+                <div class="result-item">
+                    <strong>Registration Number</strong>
+                    <span id="reg-number">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Owner Name</strong>
+                    <span id="owner-name">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Father's Name</strong>
+                    <span id="father-name">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>CNIC</strong>
+                    <span id="cnic">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Vehicle Color</strong>
+                    <span id="color">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Make / Model</strong>
+                    <span id="make-model">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Engine Number</strong>
+                    <span id="engine">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Chassis Number</strong>
+                    <span id="chassis">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Registration Date</strong>
+                    <span id="reg-date">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Vehicle Type</strong>
+                    <span id="type">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Engine Capacity</strong>
+                    <span id="engine-capacity">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Fuel Type</strong>
+                    <span id="fuel">-</span>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 Vehicle Information System | Data sourced from Excise Department</p>
+            <p>This is a demonstration interface only</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM elements
+        const vehicleNumberInput = document.getElementById('vehicle-number');
+        const searchBtn = document.getElementById('search-btn');
+        const loadingElement = document.getElementById('loading');
+        const errorElement = document.getElementById('error');
+        const successElement = document.getElementById('success');
+        const resultsElement = document.getElementById('results');
+        const typeButtons = document.querySelectorAll('.type-btn');
+        const printBtn = document.getElementById('print-btn');
+        const errorMessage = document.getElementById('error-message');
+        
+        // Set active vehicle type
+        typeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                typeButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+        
+        // Search function
+        searchBtn.addEventListener('click', async function() {
+            const vehicleNumber = vehicleNumberInput.value.trim().toUpperCase();
+            const vehicleType = document.querySelector('.type-btn.active').dataset.type;
+            
+            if (!vehicleNumber) {
+                showError('Please enter a vehicle number');
+                return;
+            }
+            
+            // Validate format (basic validation)
+            const regex = /^[A-Z]{2,3}-?\d{1,4}$/;
+            if (!regex.test(vehicleNumber)) {
+                showError('Invalid format. Example: LEA-1234 or KKG9561');
+                return;
+            }
+            
+            // Show loading, hide results and error
+            loadingElement.style.display = 'block';
+            resultsElement.style.display = 'none';
+            errorElement.style.display = 'none';
+            successElement.style.display = 'none';
+            
+            try {
+                // Attempt to fetch data from the API
+                // Note: This will likely fail due to CORS restrictions
+                const response = await fetch(`https://excise.gos.pk/vehicle/vehicle_search`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `reg_no=${vehicleNumber}`
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayData(data, vehicleNumber);
+                } else {
+                    throw new Error('API request failed');
+                }
+            } catch (error) {
+                // If the API call fails (which it will due to CORS), show mock data
+                setTimeout(() => {
+                    loadingElement.style.display = 'none';
+                    showMockData(vehicleNumber, vehicleType);
+                    successElement.style.display = 'block';
+                    resultsElement.style.display = 'block';
+                    
+                    // Show message about CORS
+                    showError('Note: This is demonstration data. CORS restrictions prevent direct browser access to the Excise API.');
+                }, 1500);
+            }
+        });
+        
+        // Print function
+        printBtn.addEventListener('click', function() {
+            window.print();
+        });
+        
+        // Allow pressing Enter to search
+        vehicleNumberInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchBtn.click();
+            }
+        });
+        
+        // Helper functions
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        function displayData(data, vehicleNumber) {
+            // This function would process real API response
+            // For now, we'll just show mock data
+            showMockData(vehicleNumber, '4-wheeler');
+            loadingElement.style.display = 'none';
+            successElement.style.display = 'block';
+            resultsElement.style.display = 'block';
+        }
+        
+        function showMockData(vehicleNumber, vehicleType) {
+            document.getElementById('reg-number').textContent = vehicleNumber;
+            document.getElementById('owner-name').textContent = getRandomName();
+            document.getElementById('father-name').textContent = getRandomFatherName();
+            document.getElementById('cnic').textContent = getRandomCNIC();
+            document.getElementById('color').textContent = getRandomColor();
+            document.getElementById('make-model').textContent = getRandomMakeModel(vehicleType);
+            document.getElementById('engine').textContent = getRandomEngine();
+            document.getElementById('chassis').textContent = getRandomChassis();
+            document.getElementById('reg-date').textContent = getRandomDate();
+            document.getElementById('type').textContent = vehicleType === '4-wheeler' ? 'Sedan' : 'Motorcycle';
+            document.getElementById('engine-capacity').textContent = vehicleType === '4-wheeler' ? '1300 CC' : '125 CC';
+            document.getElementById('fuel').textContent = getRandomFuelType();
+        }
+        
+        function getRandomName() {
+            const names = ['Ahmed Khan', 'Ali Raza', 'Farhan Ahmed', 'Bilal Hasan', 'Usman Ali', 'Zubair Ahmed', 'Hassan Raza'];
+            return names[Math.floor(Math.random() * names.length)];
+        }
+        
+        function getRandomFatherName() {
+            const names = ['Muhammad Siddiq', 'Abdul Razzaq', 'Muhammad Ali', 'Hafiz Ur Rehman', 'Mian Muhammad', 'Saeed Ahmed'];
+            return names[Math.floor(Math.random() * names.length)];
+        }
+        
+        function getRandomCNIC() {
+            const part1 = Math.floor(10000 + Math.random() * 90000);
+            const part2 = Math.floor(1000000 + Math.random() * 9000000);
+            const part3 = Math.floor(1 + Math.random() * 9);
+            return `${part1}-${part2}-${part3}`;
+        }
+        
+        function getRandomColor() {
+            const colors = ['White', 'Silver', 'Black', 'Grey', 'Blue', 'Red', 'Green', 'Brown'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        function getRandomMakeModel(type) {
+            if (type === '4-wheeler') {
+                const models = ['Toyota Corolla', 'Honda Civic', 'Suzuki Cultus', 'Toyota Camry', 'Honda City', 'Suzuki Swift'];
+                return models[Math.floor(Math.random() * models.length)];
+            } else {
+                const models = ['Honda 125', 'Suzuki 110', 'Yamaha 100', 'Suzuki 150', 'Honda 70', 'Yamaha 125'];
+                return models[Math.floor(Math.random() * models.length)];
+            }
+        }
+        
+        function getRandomEngine() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const numbers = '0123456789';
+            let result = '';
+            
+            for (let i = 0; i < 3; i++) {
+                result += letters.charAt(Math.floor(Math.random() * letters.length));
+            }
+            
+            result += '-';
+            
+            for (let i = 0; i < 7; i++) {
+                result += numbers.charAt(Math.floor(Math.random() * numbers.length));
+            }
+            
+            return result;
+        }
+        
+        function getRandomChassis() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            
+            for (let i = 0; i < 17; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            
+            return result;
+        }
+        
+        function getRandomDate() {
+            const day = Math.floor(Math.random() * 28) + 1;
+            const month = Math.floor(Math.random() * 12) + 1;
+            const year = Math.floor(Math.rand        .loading {
             display: none;
             text-align: center;
             margin: 20px 0;
