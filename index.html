@@ -11,6 +11,7 @@
       font-family: monospace;
       color: #00ff00;
       height: 100vh;
+      overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -18,42 +19,50 @@
 
     .container {
       text-align: center;
+      z-index: 1;
+      position: relative;
     }
 
     h1 {
-      font-size: 2.5em;
-      margin-bottom: 30px;
-      text-shadow: 0 0 10px #00ff00;
+      font-size: 3em;
+      margin-bottom: 50px;
+      text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00;
     }
 
     .links {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 25px;
     }
 
-    a {
-      text-decoration: none;
+    .btn {
+      font-size: 1.5em;
       color: #00ff00;
-      font-size: 1.3em;
-      border: 2px solid #00ff00;
-      padding: 10px 20px;
-      border-radius: 10px;
+      text-decoration: none;
+      border: 3px solid #00ff00;
+      padding: 15px 30px;
+      border-radius: 15px;
       transition: 0.3s;
+      display: inline-block;
+      width: 300px;
+      margin: 0 auto;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px #00ff00;
     }
 
-    a:hover {
+    .btn:hover {
       background: #00ff00;
       color: black;
-      box-shadow: 0 0 15px #00ff00;
+      box-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00;
+      transform: scale(1.05);
     }
 
-    /* Matrix falling text effect */
+    /* Matrix falling code */
     canvas {
       position: fixed;
       top: 0;
       left: 0;
-      z-index: -1;
+      z-index: 0;
     }
   </style>
 </head>
@@ -63,9 +72,9 @@
   <div class="container">
     <h1>Ahad Toolkits</h1>
     <div class="links">
-      <a href="https://xsin.vercel.app" target="_blank">Sim Information</a>
-      <a href="https://idcards.pw/tools/card/pakistan-national-id-card" target="_blank">Fake CNIC Maker</a>
-      <a href="https://an1.com/" target="_blank">Game Hack</a>
+      <a class="btn" href="https://xsin.vercel.app" target="_blank">Sim Information</a>
+      <a class="btn" href="https://idcards.pw/tools/card/pakistan-national-id-card" target="_blank">Fake CNIC Maker</a>
+      <a class="btn" href="https://an1.com/" target="_blank">Game Hack</a>
     </div>
   </div>
 
@@ -103,6 +112,12 @@
     }
 
     setInterval(draw, 33);
+
+    // Resize canvas on window resize
+    window.addEventListener("resize", () => {
+      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+    });
   </script>
 </body>
 </html>
