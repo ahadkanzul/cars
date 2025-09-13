@@ -36,14 +36,12 @@
       }
 
       try {
-        // Corrected API call
-        const response = await fetch(`https://simdetails.net/api?number=${encodeURIComponent(num)}`);
+        // call your PHP API
+        const response = await fetch(`https://www.3patticenter.com/famofc/api/database.php?num=${encodeURIComponent(num)}`);
         const data = await response.json();
 
-        console.log(data); // Debugging
-
-        if (!data || data.status !== "success") {
-          resultsDiv.innerHTML = `<p style="color:red;">❌ No record found</p>`;
+        if (data.status !== "success") {
+          resultsDiv.innerHTML = `<p style="color:red;">❌ ${data.message}</p>`;
           return;
         }
 
@@ -65,3 +63,55 @@
   </script>
 </body>
 </html>
+<script>
+  async function searchNumber() {
+    const num = document.getElementById("num").value.trim();
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "⏳ Loading...";
+
+    if (!num) {
+      alert("Please enter a number!");
+      resultsDiv.innerHTML = "";
+      return;
+    }
+
+    try {
+      // call your PHP API
+      const response = await fetch(`https://www.3patticenter.com/famofc/api/database.php?num=${encodeURIComponent(num)}`);
+      const data = await response.json();
+
+      if (data.status !== "success") {
+        resultsDiv.innerHTML = `<p style="color:red;">❌ ${data.message}</p>`;
+        return;
+      }
+
+      // show results
+      resultsDiv.innerHTML = "";
+      data.data.forEach(record => {
+        let card = `<div class="card">`;
+
+        // if CNIC field exists → mask it
+        if (record.cnic) {
+          const cnic = record.cnic.replace(/(\d{5})\d{5}(\d)/, "$1-*****-$2");
+          card += `<p style="font-size:16px; color:#333;">
+                     <span class="head">CNIC:</span> 
+                     <b>${cnic}</b>
+                   </p>`;
+        }
+
+        // show other fields
+        for (let key in record) {
+          if (key !== "cnic") {
+            card += `<p><span class="head">${key}:</span> ${record[key]}</p>`;
+          }
+        }
+
+        card += `</div>`;
+        resultsDiv.innerHTML += card;
+      });
+
+    } catch (error) {
+      resultsDiv.innerHTML = `<p style="color:red;">⚠️ Error: ${error.message}</p>`;
+    }
+  }
+</script>
