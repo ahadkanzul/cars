@@ -15,6 +15,16 @@
     }
     .head { font-weight: bold; }
     .error { color: red; margin-top: 10px; }
+    .btn-clear {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-clear:hover {
+      background: #cc0000;
+    }
   </style>
 </head>
 <body>
@@ -23,6 +33,7 @@
   <!-- Unified Input -->
   <input type="text" id="query" placeholder="Enter phone number or CNIC" maxlength="15">
   <button onclick="searchData()">Search</button>
+  <button class="btn-clear" onclick="clearAll()">Clear</button>
 
   <div id="errorMsg" class="error"></div>
   <div id="results"></div>
@@ -95,6 +106,12 @@
       } catch (error) {
         resultsDiv.innerHTML = `<p style="color:red;">⚠️ Error: ${error.message}</p>`;
       }
+    }
+
+    function clearAll() {
+      document.getElementById("query").value = "";
+      document.getElementById("errorMsg").innerHTML = "";
+      document.getElementById("results").innerHTML = "";
     }
   </script>
 </body>
