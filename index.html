@@ -47,11 +47,13 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            color: white;
         }
         
         .description {
             font-size: 16px;
             opacity: 0.9;
+            color: #ecf0f1;
         }
         
         .search-container {
@@ -249,7 +251,7 @@
                 <button onclick="validateAndSearch()"><i class="fas fa-search"></i> Search</button>
             </div>
             <div id="validationError" class="validation-error">
-                <i class="fas fa-exclamation-circle"></i> Invalid format. Use 10-12 digits for phone numbers or 13 digits for CNIC.
+                <i class="fas fa-exclamation-circle"></i> <span id="errorMessage">Invalid format. Use 10-12 digits for phone numbers or 13 digits for CNIC.</span>
             </div>
             <p class="instructions">Enter a valid phone number (10-12 digits) or CNIC number (13 digits without dashes)</p>
             <p class="input-format">For CNIC: 1234512345671 (13 digits, no dashes)</p>
@@ -275,10 +277,11 @@
         function validateAndSearch() {
             const input = document.getElementById("num").value.trim();
             const validationError = document.getElementById("validationError");
+            const errorMessage = document.getElementById("errorMessage");
             
             // Validate input
             if (!input) {
-                showError("Please enter a phone number or CNIC!");
+                errorMessage.textContent = "Please enter a phone number or CNIC!";
                 validationError.style.display = 'block';
                 return;
             }
@@ -288,6 +291,15 @@
             const cnicRegex = /^\d{13}$/;
             
             if (!phoneRegex.test(input) && !cnicRegex.test(input)) {
+                if (input.length < 10) {
+                    errorMessage.textContent = "Input too short. Use 10-12 digits for phone numbers or 13 digits for CNIC.";
+                } else if (input.length > 13) {
+                    errorMessage.textContent = "Input too long. Use 10-12 digits for phone numbers or 13 digits for CNIC.";
+                } else if (input.length === 13 && !cnicRegex.test(input)) {
+                    errorMessage.textContent = "Invalid CNIC format. Use 13 digits without dashes.";
+                } else {
+                    errorMessage.textContent = "Invalid phone number format. Use 10-12 digits.";
+                }
                 validationError.style.display = 'block';
                 return;
             }
@@ -383,4 +395,4 @@
         });
     </script>
 </body>
-    </html>
+        </html>
