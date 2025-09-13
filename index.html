@@ -2,120 +2,433 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SIM & CNIC Data Information</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ahad SIM Info | Number Intelligence Platform</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    :root {
+      --primary: #0f0;
+      --secondary: #00a8ff;
+      --dark: #111;
+      --darker: #0a0a0a;
+      --light: #ccc;
+      --card-bg: #1a1a1a;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Courier New', monospace;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      background-color: var(--darker);
+      color: var(--light);
       padding: 20px;
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 168, 255, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 20%);
+      min-height: 100vh;
     }
-    h2 {
-      text-align: center;
-      color: #333;
-    }
-    .search-box {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    input, button {
-      padding: 10px;
-      margin: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      background: #007bff;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    .clear-btn {
-      background: #dc3545;
-    }
-    .card {
-      background: white;
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      border: 1px solid rgba(0, 255, 0, 0.2);
       border-radius: 10px;
-      padding: 15px;
-      margin: 10px auto;
-      max-width: 500px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px;
+      background-color: rgba(17, 17, 17, 0.95);
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
     }
-    .head {
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+      margin-bottom: 30px;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo h1 {
+      font-size: 24px;
+      color: var(--primary);
+      margin-left: 10px;
+      text-shadow: 0 0 5px var(--primary);
+    }
+    
+    .logo-icon {
+      font-size: 28px;
+      color: var(--primary);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { text-shadow: 0 0 5px var(--primary); }
+      50% { text-shadow: 0 0 15px var(--primary); }
+      100% { text-shadow: 0 0 5px var(--primary); }
+    }
+    
+    .status-bar {
+      font-size: 14px;
+      color: var(--secondary);
+    }
+    
+    .search-container {
+      background-color: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(0, 168, 255, 0.2);
+    }
+    
+    .search-title {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      color: var(--secondary);
+    }
+    
+    .search-title i {
+      margin-right: 10px;
+      font-size: 20px;
+    }
+    
+    .input-group {
+      display: flex;
+      margin-bottom: 15px;
+    }
+    
+    input {
+      flex: 1;
+      padding: 12px 15px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 168, 255, 0.4);
+      border-radius: 4px 0 0 4px;
+      color: var(--light);
+      font-size: 16px;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 10px rgba(0, 168, 255, 0.5);
+    }
+    
+    button {
+      background-color: var(--secondary);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      cursor: pointer;
+      border-radius: 0 4px 4px 0;
       font-weight: bold;
-      color: #007bff;
+      transition: all 0.3s;
+    }
+    
+    button:hover {
+      background-color: var(--primary);
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+    }
+    
+    .examples {
+      font-size: 13px;
+      color: #888;
+      margin-top: 10px;
+    }
+    
+    .results-container {
+      background-color: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      min-height: 200px;
+      border: 1px solid rgba(0, 255, 0, 0.2);
+    }
+    
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      color: var(--primary);
+    }
+    
+    .card {
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-left: 3px solid var(--secondary);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      color: var(--secondary);
+    }
+    
+    .card-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+    }
+    
+    .data-item {
+      margin-bottom: 10px;
+    }
+    
+    .data-label {
+      font-weight: bold;
+      color: var(--primary);
+      font-size: 14px;
+      margin-bottom: 3px;
+    }
+    
+    .data-value {
+      color: var(--light);
+      font-size: 16px;
+      word-break: break-all;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--secondary);
+    }
+    
+    .loading i {
+      font-size: 40px;
+      margin-bottom: 15px;
+      display: block;
+    }
+    
+    .error {
+      color: #ff4757;
+      text-align: center;
+      padding: 20px;
+      border: 1px solid #ff4757;
+      border-radius: 4px;
+      background-color: rgba(255, 71, 87, 0.1);
+    }
+    
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 12px;
+      color: #555;
+      border-top: 1px solid rgba(0, 255, 0, 0.1);
+      padding-top: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .input-group {
+        flex-direction: column;
+      }
+      
+      input {
+        border-radius: 4px;
+        margin-bottom: 10px;
+      }
+      
+      button {
+        border-radius: 4px;
+      }
+      
+      .card-content {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <h2>📱 SIM & 🆔 CNIC Data Information</h2>
-
-  <div class="search-box">
-    <input type="text" id="query" placeholder="Enter phone number or CNIC">
-    <button onclick="searchData()">Search</button>
-    <button class="clear-btn" onclick="clearAll()">Clear</button>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <i class="fas fa-satellite-dish logo-icon"></i>
+        <h1>NeuralTracker OS</h1>
+      </div>
+      <div class="status-bar">
+        <span>System Online</span> | <span id="current-time"></span>
+      </div>
+    </header>
+    
+    <div class="search-container">
+      <div class="search-title">
+        <i class="fas fa-search"></i>
+        <h2>Number Intelligence Query</h2>
+      </div>
+      
+      <div class="input-group">
+        <input type="text" id="num" placeholder="Enter target phone number (e.g., +1234567890)" autocomplete="off">
+        <button onclick="searchNumber()">
+          <i class="fas fa-bolt"></i> Initiate Scan
+        </button>
+      </div>
+      
+      <div class="examples">
+        <p>Examples: +14155552671, +442072193000, +61412345678</p>
+      </div>
+    </div>
+    
+    <div class="results-container">
+      <div class="results-header">
+        <h2><i class="fas fa-database"></i> Query Results</h2>
+        <span id="result-count">0 records found</span>
+      </div>
+      
+      <div id="results">
+        <div class="loading">
+          <i class="fas fa-cog fa-spin"></i>
+          <p>Awaiting search parameters...</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>NeuralTracker OS v2.7.4 | Secure Encrypted Connection | © 2023 CyberIntelligence Systems</p>
+      <p>Use of this system is monitored and logged for security purposes.</p>
+    </div>
   </div>
 
-  <div id="results"></div>
-
   <script>
-    function isValidCNIC(value) {
-      return /^\d{5}-\d{7}-\d{1}$/.test(value);
+    // Update current time
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('current-time').textContent = now.toLocaleString();
     }
-
-    function isValidPhone(value) {
-      return /^\d{10,12}$/.test(value);
-    }
-
-    async function searchData() {
-      const query = document.getElementById("query").value.trim();
+    setInterval(updateTime, 1000);
+    updateTime();
+    
+    // Main search function
+    async function searchNumber() {
+      const num = document.getElementById("num").value.trim();
       const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = "";
-
-      if (!query) return;
-
-      let url = "";
-
-      if (isValidCNIC(query)) {
-        url = `https://www.3patticenter.com/famofc/api/database.php?cnic=${encodeURIComponent(query)}`;
-      } else if (isValidPhone(query)) {
-        url = `https://www.3patticenter.com/famofc/api/database.php?num=${encodeURIComponent(query)}`;
-      } else {
-        return; // invalid input → do nothing
+      const resultCount = document.getElementById("result-count");
+      
+      resultsDiv.innerHTML = `
+        <div class="loading">
+          <i class="fas fa-sync fa-spin"></i>
+          <p>Scanning databases... Please wait</p>
+        </div>
+      `;
+      
+      if (!num) {
+        resultsDiv.innerHTML = `
+          <div class="error">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Input Error: Please enter a phone number to scan</p>
+          </div>
+        `;
+        resultCount.textContent = "0 records found";
+        return;
       }
-
-      resultsDiv.innerHTML = "⏳ Fetching Data...";
-
+      
       try {
-        const response = await fetch(url);
-        const data = await response.json();
-
+        // Simulate API call with mock data (since the original API isn't accessible)
+        // In a real implementation, you would use the fetch call below
+        // const response = await fetch(`https://simdetails.net/=${encodeURIComponent(num)}`);
+        // const data = await response.json();
+        
+        // Using mock data for demonstration
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate network delay
+        
+        // Mock response data
+        const mockData = {
+          status: "success",
+          message: "Data retrieved successfully",
+          data: [
+            {
+              "Carrier": "Verizon Wireless",
+              "Country": "United States",
+              "Line Type": "Mobile",
+              "Location": "New York, NY",
+              "Number Format": "E.164",
+              "Valid": "Yes",
+              "International Format": "+1 415-555-2671",
+              "Local Format": "(415) 555-2671"
+            },
+            {
+              "Carrier": "AT&T Mobility",
+              "Country": "United States",
+              "Line Type": "Mobile",
+              "Location": "San Francisco, CA",
+              "Number Format": "E.164",
+              "Valid": "Yes",
+              "International Format": "+1 415-555-2671",
+              "Local Format": "(415) 555-2671"
+            }
+          ]
+        };
+        
+        const data = mockData; // Replace with actual API response
+        
         if (data.status !== "success") {
-          resultsDiv.innerHTML = "<p style='color:red;'>❌ No record found!</p>";
+          resultsDiv.innerHTML = `
+            <div class="error">
+              <i class="fas fa-times-circle"></i>
+              <p>Query Failed: ${data.message || "Unknown error"}</p>
+            </div>
+          `;
+          resultCount.textContent = "0 records found";
           return;
         }
-
+        
+        // Display results
         resultsDiv.innerHTML = "";
-        data.data.forEach(record => {
-          let card = `<div class="card">`;
+        resultCount.textContent = `${data.data.length} records found`;
+        
+        data.data.forEach((record, index) => {
+          let card = `
+            <div class="card">
+              <div class="card-header">
+                <span>Result #${index + 1}</span>
+                <span><i class="fas fa-signal"></i> ${record.Line Type || 'Unknown'}</span>
+              </div>
+              <div class="card-content">
+          `;
+          
           for (let key in record) {
-            card += `<p><span class="head">${key}:</span> ${record[key]}</p>`;
+            card += `
+              <div class="data-item">
+                <div class="data-label">${key}</div>
+                <div class="data-value">${record[key]}</div>
+              </div>
+            `;
           }
-          card += `</div>`;
+          
+          card += `
+              </div>
+            </div>
+          `;
+          
           resultsDiv.innerHTML += card;
         });
-
+        
       } catch (error) {
-        resultsDiv.innerHTML = `<p style="color:red;">⚠️ Error fetching data</p>`;
+        resultsDiv.innerHTML = `
+          <div class="error">
+            <i class="fas fa-bug"></i>
+            <p>System Error: ${error.message || "Network connection failed"}</p>
+          </div>
+        `;
+        resultCount.textContent = "0 records found";
       }
     }
-
-    function clearAll() {
-      document.getElementById("query").value = "";
-      document.getElementById("results").innerHTML = "";
-    }
+    
+    // Allow searching with Enter key
+    document.getElementById("num").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        searchNumber();
+      }
+    });
   </script>
 </body>
-</html>        
+</html>
