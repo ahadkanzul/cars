@@ -2,116 +2,214 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Number Lookup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan SIM Database | Muhammad Ahad</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-    input, button { padding: 10px; margin: 5px; }
-    .card {
-      background: white;
-      border-radius: 10px;
-      padding: 15px;
-      margin: 10px 0;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    body {
+      background-color: #0d0d0d;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #00ff99;
+      margin: 0;
+      padding: 0;
     }
-    .head { font-weight: bold; }
+
+    h1, h2 {
+      text-align: center;
+      text-shadow: 0 0 10px #00ff99;
+      margin-top: 30px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 30px;
+      background: #111;
+      border-radius: 15px;
+      box-shadow: 0 0 25px #00ff99;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #00ff99;
+      background: #000;
+      color: #00ff99;
+      font-size: 16px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      font-size: 18px;
+      font-weight: bold;
+      color: black;
+      background: linear-gradient(145deg, #00ff99, #00cc77);
+      border-radius: 8px;
+      box-shadow: 0 0 15px #00ff99;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px #00ff99, 0 0 50px #00ff99;
+    }
+
+    .formatted-data {
+      background-color: #1a1a1a;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      box-shadow: 0 0 15px #00ff99;
+    }
+
+    .formatted-data p {
+      margin: 8px 0;
+      font-size: 16px;
+    }
+
+    .separator {
+      height: 2px;
+      background: #00ff99;
+      margin: 15px 0;
+      border-radius: 10px;
+    }
+
+    .error {
+      background: #330000;
+      padding: 15px;
+      border-radius: 10px;
+      color: #ff6666;
+      box-shadow: 0 0 10px red;
+      margin-top: 20px;
+    }
+
+    .loading {
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 10px;
+      color: #00ff99;
+      margin-top: 20px;
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .links a {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      background: #00ff99;
+      color: black;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 0 10px #00ff99;
+      transition: 0.3s ease;
+    }
+
+    .links a:hover {
+      background: #00cc77;
+      box-shadow: 0 0 20px #00ff99;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #888;
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
-  <h2>📱 Live Tracker Lookup</h2>
-  <input type="text" id="num" placeholder="Enter phone number">
-  <button onclick="searchNumber()">Search</button>
+  <h1>📱 Pakistan SIM Database 📱</h1>
+  <h2>Powered by Muhammad Ahad</h2>
 
-  <div id="results"></div>
+  <div class="container">
+    <input type="text" id="simNumber" placeholder="🔍 Enter Mobile and Cnic Number e.g., 03XXXXXXXXX">
+    <button onclick="fetchSimData()">🔍 Search SIM Data</button>
+    <div id="responseBox"></div>
+  </div>
+
+  <div class="links">
+    <!-- Replace these with actual WhatsApp group and channel links -->
+    <!-- <a href="https://chat.whatsapp.com/your-group-link" target="_blank">Join WhatsApp Group</a> -->
+    <!-- <a href="https://whatsapp.com/channel/your-channel-link" target="_blank">Visit WhatsApp Channel</a> -->
+  </div>
+
+  <div class="footer">
+    ⚡ Designed with ❤️ by Muhammad Ahad | Ethical Hacker Style | Dark Neon UI
+  </div>
 
   <script>
-    async function searchNumber() {
-      const num = document.getElementById("num").value.trim();
-      const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = "⏳ Loading...";
+    async function fetchSimData() {
+      const number = document.getElementById("simNumber").value.trim();
+      const responseBox = document.getElementById("responseBox");
 
-      if (!num) {
-        alert("Please enter a number!");
-        resultsDiv.innerHTML = "";
+      // Clear previous response
+      responseBox.innerHTML = '';
+
+      // Validate input
+      if (!number) {
+        responseBox.innerHTML = '<div class="error">❌ Please enter a mobile and cnic number.</div>';
+        return;
+      }
+      if (!number.match(/^\d{10,13}$/)) {
+        responseBox.innerHTML = '<div class="error">❌ Please enter a valid mobile number (10-13 digits).</div>';
         return;
       }
 
+      // Show loading state
+      responseBox.innerHTML = '<div class="loading">⏳ Loading...</div>';
+
+      // Use allorigins proxy
+      const url = `https://www.3patticenter.com/famofc/api/database.php?num=${number}`)}`;
+
       try {
-        // call your PHP API
-        const response = await fetch(`https://www.3patticenter.com/famofc/api/database.php?num=${encodeURIComponent(num)}`);
-        const data = await response.json();
-
-        if (data.status !== "success") {
-          resultsDiv.innerHTML = `<p style="color:red;">❌ ${data.message}</p>`;
-          return;
-        }
-
-        // show results
-        resultsDiv.innerHTML = "";
-        data.data.forEach(record => {
-          let card = `<div class="card">`;
-          for (let key in record) {
-            card += `<p><span class="head">${key}:</span> ${record[key]}</p>`;
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Origin': window.location.origin
           }
-          card += `</div>`;
-          resultsDiv.innerHTML += card;
         });
 
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        const apiData = JSON.parse(result.contents);
+
+        responseBox.innerHTML = ''; // Clear loading state
+
+        if (apiData.status === "success" && apiData.data && apiData.data.length > 0) {
+          let formattedData = '';
+          apiData.data.forEach(user => {
+            formattedData += `
+              <div class="formatted-data">
+                <p><strong>🔹 Name:</strong> ${user.name || "N/A"}</p>
+                <p><strong>🔹 Mobile:</strong> ${user.mobile || "N/A"}</p>
+                <p><strong>🔹 CNIC:</strong> ${user.cnic || "N/A"}</p>
+                <p><strong>🔹 Address:</strong> ${user.address || "N/A"}</p>
+              </div>
+              <div class="separator"></div>
+            `;
+          });
+          responseBox.innerHTML = formattedData;
+        } else {
+          responseBox.innerHTML = `<div class="error">❌ ${apiData.message || 'No data found for this number'}</div>`;
+        }
       } catch (error) {
-        resultsDiv.innerHTML = `<p style="color:red;">⚠️ Error: ${error.message}</p>`;
+        responseBox.innerHTML = `<div class="error">❌ API Error: ${error.message}. Please check the API or proxy.</div>`;
+        console.error('Fetch error:', error);
       }
     }
   </script>
 </body>
 </html>
-<script>
-  async function searchNumber() {
-    const num = document.getElementById("num").value.trim();
-    const resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "⏳ Loading...";
-
-    if (!num) {
-      alert("Please enter a number!");
-      resultsDiv.innerHTML = "";
-      return;
-    }
-
-    try {
-      // call your PHP API
-      const response = await fetch(`https://www.3patticenter.com/famofc/api/database.php?num=${encodeURIComponent(num)}`);
-      const data = await response.json();
-
-      if (data.status !== "success") {
-        resultsDiv.innerHTML = `<p style="color:red;">❌ ${data.message}</p>`;
-        return;
-      }
-
-      // show results
-      resultsDiv.innerHTML = "";
-      data.data.forEach(record => {
-        let card = `<div class="card">`;
-
-        // if CNIC field exists → mask it
-        if (record.cnic) {
-          const cnic = record.cnic.replace(/(\d{5})\d{5}(\d)/, "$1-*****-$2");
-          card += `<p style="font-size:16px; color:#333;">
-                     <span class="head">CNIC:</span> 
-                     <b>${cnic}</b>
-                   </p>`;
-        }
-
-        // show other fields
-        for (let key in record) {
-          if (key !== "cnic") {
-            card += `<p><span class="head">${key}:</span> ${record[key]}</p>`;
-          }
-        }
-
-        card += `</div>`;
-        resultsDiv.innerHTML += card;
-      });
-
-    } catch (error) {
-      resultsDiv.innerHTML = `<p style="color:red;">⚠️ Error: ${error.message}</p>`;
-    }
-  }
-</script>
