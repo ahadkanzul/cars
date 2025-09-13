@@ -14,38 +14,64 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     .head { font-weight: bold; }
+    .error { color: red; margin-top: 10px; }
   </style>
 </head>
 <body>
   <h2>📱 SIM & 🆔 CNIC Lookup</h2>
 
   <!-- Unified Input -->
-  <input type="text" id="query" placeholder="Enter phone number or CNIC">
+  <input type="text" id="query" placeholder="Enter phone number or CNIC" maxlength="15">
   <button onclick="searchData()">Search</button>
 
+  <div id="errorMsg" class="error"></div>
   <div id="results"></div>
 
   <script>
+    // Auto-format CNIC while typing
+    document.getElementById("query").addEventListener("input", function(e) {
+      let value = e.target.value.replace(/\D/g, ""); // remove non-digits
+      if (value.length > 5 && value.length <= 12) {
+        value = value.replace(/^(\d{5})(\d{0,7})/, "$1-$2");
+      }
+      if (value.length > 12) {
+        value = value.replace(/^(\d{5})(\d{7})(\d{0,1}).*/, "$1-$2-$3");
+      }
+      e.target.value = value;
+    });
+
+    function isValidCNIC(value) {
+      return /^\d{5}-\d{7}-\d{1}$/.test(value);
+    }
+
+    function isValidPhone(value) {
+      return /^\d{10,12}$/.test(value); // basic check (10–12 digits)
+    }
+
     async function searchData() {
-      const query = document.getElementById("query").value.trim();
+      let query = document.getElementById("query").value.trim();
+      const errorMsg = document.getElementById("errorMsg");
       const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = "⏳ Loading...";
+      resultsDiv.innerHTML = "";
+      errorMsg.innerHTML = "";
 
       if (!query) {
-        alert("Please enter a number or CNIC!");
-        resultsDiv.innerHTML = "";
+        errorMsg.innerHTML = "⚠️ Please enter a phone number or CNIC!";
         return;
       }
 
-      // Detect if CNIC or Phone Number
       let url = "";
-      if (/^\d{13}$/.test(query) || /^\d{5}-\d{7}-\d{1}$/.test(query)) {
-        // CNIC (13 digits or formatted XXXXX-XXXXXXX-X)
+
+      if (isValidCNIC(query)) {
         url = `https://www.3patticenter.com/famofc/api/database.php?cnic=${encodeURIComponent(query)}`;
-      } else {
-        // Otherwise treat as phone number
+      } else if (isValidPhone(query)) {
         url = `https://www.3patticenter.com/famofc/api/database.php?num=${encodeURIComponent(query)}`;
+      } else {
+        errorMsg.innerHTML = "❌ Invalid input! Enter a valid CNIC (e.g. 35202-1234567-1) or phone number (10–12 digits).";
+        return;
       }
+
+      resultsDiv.innerHTML = "⏳ Loading...";
 
       try {
         const response = await fetch(url);
