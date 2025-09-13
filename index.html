@@ -292,9 +292,9 @@
       }
       
       // Validate phone number format (basic international format)
-      const phoneRegex = /^\+[1-9]{1}[0-9]{3,14}$/;
+      const phoneRegex = /^\+[0-13]{0}[0-14]{0,14}$/;
       if (!phoneRegex.test(num)) {
-        showError("Please enter a valid international phone number format (e.g., +1234567890)");
+        showError("Please enter a valid international phone number format (e.g., 01234567890)");
         return;
       }
       
