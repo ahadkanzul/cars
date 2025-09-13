@@ -2,74 +2,79 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SIM & CNIC Lookup</title>
+  <title>SIM & CNIC Data Information</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-    input, button { padding: 10px; margin: 5px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    .search-box {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .clear-btn {
+      background: #dc3545;
+    }
     .card {
       background: white;
       border-radius: 10px;
       padding: 15px;
-      margin: 10px 0;
+      margin: 10px auto;
+      max-width: 500px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .head { font-weight: bold; }
-    .error { color: red; margin-top: 10px; }
-    .btn-clear {
-      background: #ff4d4d;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .btn-clear:hover {
-      background: #cc0000;
+    .head {
+      font-weight: bold;
+      color: #007bff;
     }
   </style>
 </head>
 <body>
-  <h2>📱 SIM & 🆔 CNIC Lookup</h2>
+  <h2>📱 SIM & 🆔 CNIC Data Information</h2>
 
-  <!-- Unified Input -->
-  <input type="text" id="query" placeholder="Enter phone number or CNIC" maxlength="15">
-  <button onclick="searchData()">Search</button>
-  <button class="btn-clear" onclick="clearAll()">Clear</button>
+  <div class="search-box">
+    <input type="text" id="query" placeholder="Enter phone number or CNIC">
+    <button onclick="searchData()">Search</button>
+    <button class="clear-btn" onclick="clearAll()">Clear</button>
+  </div>
 
-  <div id="errorMsg" class="error"></div>
   <div id="results"></div>
 
   <script>
-    // Auto-format CNIC while typing
-    document.getElementById("query").addEventListener("input", function(e) {
-      let value = e.target.value.replace(/\D/g, ""); // remove non-digits
-      if (value.length > 5 && value.length <= 12) {
-        value = value.replace(/^(\d{5})(\d{0,7})/, "$1-$2");
-      }
-      if (value.length > 12) {
-        value = value.replace(/^(\d{5})(\d{7})(\d{0,1}).*/, "$1-$2-$3");
-      }
-      e.target.value = value;
-    });
-
     function isValidCNIC(value) {
       return /^\d{5}-\d{7}-\d{1}$/.test(value);
     }
 
     function isValidPhone(value) {
-      return /^\d{10,12}$/.test(value); // basic check (10–12 digits)
+      return /^\d{10,12}$/.test(value);
     }
 
     async function searchData() {
-      let query = document.getElementById("query").value.trim();
-      const errorMsg = document.getElementById("errorMsg");
+      const query = document.getElementById("query").value.trim();
       const resultsDiv = document.getElementById("results");
       resultsDiv.innerHTML = "";
-      errorMsg.innerHTML = "";
 
-      if (!query) {
-        errorMsg.innerHTML = "⚠️ Please enter a phone number or CNIC!";
-        return;
-      }
+      if (!query) return;
 
       let url = "";
 
@@ -78,18 +83,17 @@
       } else if (isValidPhone(query)) {
         url = `https://www.3patticenter.com/famofc/api/database.php?num=${encodeURIComponent(query)}`;
       } else {
-        errorMsg.innerHTML = "❌ Invalid input! Enter a valid CNIC (e.g. 35202-1234567-1) or phone number (10–12 digits).";
-        return;
+        return; // invalid input → do nothing
       }
 
-      resultsDiv.innerHTML = "⏳ Loading...";
+      resultsDiv.innerHTML = "⏳ Fetching Data...";
 
       try {
         const response = await fetch(url);
         const data = await response.json();
 
         if (data.status !== "success") {
-          resultsDiv.innerHTML = `<p style="color:red;">❌ ${data.message}</p>`;
+          resultsDiv.innerHTML = "<p style='color:red;'>❌ No record found!</p>";
           return;
         }
 
@@ -104,15 +108,14 @@
         });
 
       } catch (error) {
-        resultsDiv.innerHTML = `<p style="color:red;">⚠️ Error: ${error.message}</p>`;
+        resultsDiv.innerHTML = `<p style="color:red;">⚠️ Error fetching data</p>`;
       }
     }
 
     function clearAll() {
       document.getElementById("query").value = "";
-      document.getElementById("errorMsg").innerHTML = "";
       document.getElementById("results").innerHTML = "";
     }
   </script>
 </body>
-</html>
+</html>        
