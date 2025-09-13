@@ -202,6 +202,13 @@
             margin-top: 5px;
         }
         
+        .validation-error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
         @media (max-width: 600px) {
             .input-group {
                 flex-direction: column;
@@ -239,7 +246,10 @@
         <div class="search-container">
             <div class="input-group">
                 <input type="text" id="num" placeholder="Enter phone number (10-12 digits) or CNIC">
-                <button onclick="searchNumber()"><i class="fas fa-search"></i> Search</button>
+                <button onclick="validateAndSearch()"><i class="fas fa-search"></i> Search</button>
+            </div>
+            <div id="validationError" class="validation-error">
+                <i class="fas fa-exclamation-circle"></i> Invalid format. Use 10-12 digits for phone numbers or 13 digits for CNIC.
             </div>
             <p class="instructions">Enter a valid phone number (10-12 digits) or CNIC number (13 digits without dashes)</p>
             <p class="input-format">For CNIC: 1234512345671 (13 digits, no dashes)</p>
@@ -262,13 +272,14 @@
     </footer>
 
     <script>
-        async function searchNumber() {
+        function validateAndSearch() {
             const input = document.getElementById("num").value.trim();
-            const resultsDiv = document.getElementById("results");
+            const validationError = document.getElementById("validationError");
             
             // Validate input
             if (!input) {
                 showError("Please enter a phone number or CNIC!");
+                validationError.style.display = 'block';
                 return;
             }
             
@@ -277,9 +288,19 @@
             const cnicRegex = /^\d{13}$/;
             
             if (!phoneRegex.test(input) && !cnicRegex.test(input)) {
-                showError("Please enter a valid phone number (10-12 digits) or CNIC (13 digits without dashes)");
+                validationError.style.display = 'block';
                 return;
             }
+            
+            // Hide validation error if input is valid
+            validationError.style.display = 'none';
+            
+            // Proceed with search
+            searchNumber(input);
+        }
+        
+        async function searchNumber(input) {
+            const resultsDiv = document.getElementById("results");
             
             // Show loading state
             resultsDiv.innerHTML = `
@@ -352,9 +373,14 @@
         // Allow pressing Enter to search
         document.getElementById("num").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
-                searchNumber();
+                validateAndSearch();
             }
+        });
+        
+        // Hide validation error when user starts typing
+        document.getElementById("num").addEventListener("input", function() {
+            document.getElementById("validationError").style.display = 'none';
         });
     </script>
 </body>
-</html>
+    </html>
